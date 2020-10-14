@@ -524,3 +524,79 @@ Before pass mutable collection to another part of our program, wrap in unmodifia
 Mutable collection inside an unmodifiable wrapper can still be modified, defeating the
 wrapper.
 
+ADTs: separate usage of data structure from particular form of the data structure itself
+•	dangerous problem: clients' assumptions about the type's internal representation.
+•	a type is characterized by the operations you can perform on it. Can be immutable, mutable
+o	For ADT, only operations matters
+ 
+Abstraction: Omitting or hiding low-level details.
+ 
+Modularity: Dividing a system into components or modules
+•	each can be designed, implemented, tested, reasoned about, and reused separately from the rest of the system.
+ 
+Encapsulation: Building walls around a module (a hard shell or capsule) 
+•	So module is responsible for its own internal behavior
+•	bugs in other parts of the system cannot damage its integrity.
+ 
+Information hiding: Hiding details of a module's implementation from the rest of the system, so that those details can be changed later without changing the rest of the system.
+ 
+Separation of concerns: Making a feature (or "concern") the responsibility of a single module, rather than spreading it across multiple modules.
+ 
+Operations of an abstract type:
+Creators: create new objects of the type. A creator may take an object as an argument, but not an object of the type being constructed. 
+•	Constructor methods are creators 
+ 
+Producers create new objects from old objects of the type. 
+•	concat() method of String (takes two strings and produces a new one representing their concatenation.)
+ 
+Observers: take objects of the abstract type and return objects of a different type. 
+•	size() method of List (returns an int)
+ 
+Mutators change objects. 
+•	add() method of List (mutates a list by adding an element to the end)
+ 
+Interface: list of method signatures, no method body. language mechanism for expressing an abstract data type. 
+•	other classes provide the actual implementation of the data type
+•	specifies the contract for the client and nothing more.
+•	With interface, multiple representations of ADT can co-exist in the same program
+o	Otherwise, only 1 representation
+•	In java, interface not allowed constructors, but allowed static method
+o	Factory method: static method as a creator instead of a
+Constructor
+ 
+Why Interface?
+•	Documentation (for compiler and human) help the compiler catch ADT implementation bugs
+•	Performance trade-offs. provide methods with very different performance characteristics. 
+•	Flexibility. Different invariant options
+•	Optional methods. Can make mutability optional
+•	Methods with undetermined specs: 
+Implementation 1: slower method implementations, but representation sorted order, allowing quick conversion to a sorted list.
+Implementation 2: methods faster by not supporting conversion to sorted lists
+•	Multiple views of one class: no need ADT multiple times for different data structure (want to view as widget or a list?)
+•	More/less trustworthy: "choose" implementations for applications based on how serious bugs are
+ 
+better to have simple operations that can be combined in powerful ways, rather than lots of complex operations
+4
+Invariants:  a property of a program that is always true, for every possible runtime state
+•	abstract data type preserves its own invariants, meaning
+o	creators and producers must establish the invariant for new object instances
+o	mutators and observers must preserve the invariant
+Structural induction . If an invariant of an abstract data type is
+1. established by creators and producers;
+2. preserved by mutators, and observers; and
+3. no representation exposure occurs,
+then the invariant is true of all instances of the abstract data type.
+ 
+Representation exposure: code outside the class can modify the representation directly
+•	Beware of mutability of argument types and return types of all ADT operations
+ 
+Types may be:
+•	Generic: a list or a set, or a graph OR
+•	Domain specific: a street map, an employee database, a phone book, etc.
+o	should not mix generic and domain-specific features. 
+ 
+ADTs should be: 
+•	Representation independent. 
+o	operations offered by List are independent of whether the list is
+represented as a linked list or as an array.
+o	changes in representation have no effect on code outside the abstract type itself
