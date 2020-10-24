@@ -171,7 +171,7 @@ use preconditions and postconditions to reason about&debug programs
 +	Arrays are mutable
 
 tldr[6] Testing and Code Review
-
+===
 Validation: process of testing and code review, to uncover problems. Involves:
 	- Verification: formal reasoning, proof
 	- Testing: having inputs and checking results
@@ -255,6 +255,7 @@ In code review, we saw these principles:
 Three C's - Correct - Comprehensible  - Changeable
 
 tldr[7] Exceptions
+===
 
 Procedural specifications: help describe what method does & how clients should use the method
  
@@ -289,8 +290,9 @@ note that throws and throw is not the same
 
 
 
-9
+
 [8] How to Debug
+===
 systematic debugging practices: diagrams to represent memory states, reduce human misunderstanding
  
 Primitive values: bare constants
@@ -335,6 +337,7 @@ tests);
 
 
 [9] Avoid Debugging
+===
 1.	Make Bugs Impossible
 2.	Localize Bugs
 o	Assertions
@@ -408,6 +411,7 @@ Good Practice to:
 
 
 [10] Designing Specs
+===
 Two types:
 •	Operational specifications: give a series of steps that the method performs; pseudocode; descriptions are operational.
 •	Declarative specifications: don't give details of intermediate steps;
@@ -461,8 +465,9 @@ Static methods: not associated with any particular instance of a class
 Instance methods: must be called on a particular object or instance.
 •	Specifications for instance methods: same, but will refer to properties of instance (object) on which they were called.
 
-13
+
 [11] Mutability
+===
 Mutable objects "representing state", if applied methods, can change its state. Mutable objects to model finite state machines, but difficult to reason program correctness.
 Mutation occurs when a value (or object) that a reference variable points to changes.
  
@@ -524,7 +529,9 @@ Before pass mutable collection to another part of our program, wrap in unmodifia
 Mutable collection inside an unmodifiable wrapper can still be modified, defeating the
 wrapper.
 
-ADTs: separate usage of data structure from particular form of the data structure itself
+[12] ADTs:
+===
+separate usage of data structure from particular form of the data structure itself
 •	dangerous problem: clients' assumptions about the type's internal representation.
 •	a type is characterized by the operations you can perform on it. Can be immutable, mutable
 o	For ADT, only operations matters
@@ -600,3 +607,92 @@ ADTs should be:
 o	operations offered by List are independent of whether the list is
 represented as a linked list or as an array.
 o	changes in representation have no effect on code outside the abstract type itself
+
+[13] Robust Data Types
+===
+***Abstraction Functions:*** A map from the symbol to the abstract meaning (Ex. '4' -> the number four in our heads)
+
+***Problem:*** We want to represent the symbols from zero to nine, and our symbols are restricted to ' 0 1 2 3 4 5 6 7 8 9 '
+         Any other symbol would be meaningless. 
+
+***Representation Invariants:*** Requiring the symbols be from 0 to 9 is what's called the representation
+                           invariant for single-digit numbers. 
+                           
++ When thinking about an abstract type, Consider the relationship between the following two spaces
+ + **Representation Values** 
+    + How you store these values in memory *(Ex. in an ArrayList? In a string?)*. 
+    + This is the x-value on your graph.
+ + **Abstract Values**
+     + Things you want to represent (e.g. complex numbers, sets of characters).
+     + This is the y-value on your graph.
+     
+     + **Ex. An abstract type for unbounded ints**
+        + Possible Abstract Value Space: Mathematical Integers
+        + Not Relevant: They are implemented as an array of primitive (bounded) ints
+     
+     + **Why should the Implementor must be interested in the rep values?**
+        + Because the data type should give the illusion of the Abstract Value Space by using the Rep Value Space
+     
+ + **Ex. Graphically Representing Spaces:** 
+   + Draw two circles:
+     + One containing the Rep Space 
+     + One containing the Abstract Space 
+     + Arrows pointing from the Rep Value to the Abstract Value it represents.
+   + Notes
+     + Every Abstract Value is mapped to by at least one Rep Value
+     + Some Abstract Valeus are mapped to by more than one Rep Value
+     + Not all Rep Values are mapped
+ + We show a few key values to represent them as a graph, but in reality the graphs are infinite. 
+   Based on this we describe it by giving two things:
+ + **1) An Abstraction Function that maps rep values to the abstract values they represent:**
+    + **Ex.** ***(AF : R -> A)***
+    + In Function Terminology:
+        + AF is surjective
+        + AF is not necissarily Bijective
+        + AF is often partial
+ 
+ + **2) A Representation Invariant:**
+    + Maps Rep Values to booleans
+    + **Ex.** ***(RI : R -> boolean)***
+    + For a rep value r:
+        + *RI(r) == true* ***if and only if*** *r* is mapped by AF.
+    + Put another way:
+        + RI tells us if a given rep value is well-formed.
+        + RI is a subset of Rep Values over which AF is defined
+        + RI is the domain of AF
+ + Abstract Functions and Rep Invariants **Are Not** Defined by the choice of Rep and Abstract Value Spaces
+ + ***Designing an Abstract Type means:***
+    + Choosing a Rep Space for the implementation
+    + Choosing an Abstract Space for the specification
+    + Deciding what Rep Values to use and how to interpret them.
+    + **Write these down!!**
+###Checking The Rep Invariant
++ When should you check the rep invariant?
+    + Any time a new object is created **OR**
+    + Any time an existing object is mutated 
+    + Inside Creators, Produces and Mutators
+    + It is also good defensive programming practice to call checkRep() in Observer methods because your code will be 
+      more likely to catch rep invariant violations caused by Rep Exposure
+###No Null Values in the Rep
++ Null values are not typically accepted by primitive datatypes, however, Non-Primitive Data types can accept them.
++ It is good practice to state that references cannot be Null in the rep invariant
+    + By doing this you are adding to program safety.
++ When implementing the Rep Invariant in a checkRep() method, you must implement the s =/= null
+    + Also check to ensure it fails correctly when null is passed.
+    + It is often free to check from java because the errors are built into many methods, but if it isn't
+      it must be checked explicitly
+### Summary
++ The Restrictions that cannot be encoded directly in the Data or Representation alone are communicated
+  through the Rep Invariant.
++ The Abstract Function tells us that if we have a set of Data that meets the Rep Invariant, then they represent a 
+  valid item.
+    + *(Ex. A Line Segment, A Complex Number, An ID Number)*
++ Specs, Rep Invariants, and Abstraction Functions encode assumptions we make when we write software. 
++ Separating these Assumptions into different categories makes it easier do the following:
+    + Understanding and maintaining software.
+    + Automate certain aspects of software verification.
+
+ 
+       
+            
+
